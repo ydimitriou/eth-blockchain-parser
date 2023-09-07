@@ -20,6 +20,10 @@ func NewSubscriberRepository() SubscriberRepository {
 
 // Add adds the given subsciber in memory
 func (mr SubscriberRepository) Add(sub subscriber.Subscriber) error {
+	_, exists := mr.subscribers[sub.Address]
+	if exists {
+		return fmt.Errorf("address %v is already a subscriber", sub.Address)
+	}
 	mr.subscribers[sub.Address] = sub
 
 	return nil

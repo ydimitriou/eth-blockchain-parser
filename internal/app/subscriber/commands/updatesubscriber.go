@@ -7,6 +7,7 @@ import (
 	"github.com/ydimitriou/eth-blockchain-parser/internal/domain/transaction"
 )
 
+// UpdateSubscriberRequest Model of UpdateSubscriberHandler
 type UpdateSubscriberRequest struct {
 	Address     string
 	Transaction TransactionsRequest
@@ -17,6 +18,7 @@ type TransactionsRequest struct {
 	To   string
 }
 
+// UpdateSubscriberHandler interface for updating subscribers transactions
 type UpdateSubscriberHandler interface {
 	Handle(req UpdateSubscriberRequest) error
 }
@@ -25,10 +27,12 @@ type updateSubscriberHandler struct {
 	repo subscriber.Repository
 }
 
+// NewUpdateSubscriberHandler constructor
 func NewUpdateSubscriberHandler(repo subscriber.Repository) UpdateSubscriberHandler {
 	return updateSubscriberHandler{repo: repo}
 }
 
+// Handle handles subscriber updates requests
 func (h updateSubscriberHandler) Handle(req UpdateSubscriberRequest) error {
 	s, err := h.repo.GetByAddress(req.Address)
 	if err != nil {

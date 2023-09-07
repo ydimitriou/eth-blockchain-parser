@@ -19,6 +19,7 @@ const (
 	jsonRpc               = "2.0"
 )
 
+// RpcRequest represents the request for ethereum rpc calls
 type RpcRequest struct {
 	Jsonrpc string        `json:"jsonrpc"`
 	Method  string        `json:"method"`
@@ -26,17 +27,20 @@ type RpcRequest struct {
 	Id      int           `json:"id"`
 }
 
+// GetCurrenBlockResponse represents the response from the eth_blockNumber
 type GetCurrenBlockResponse struct {
 	ID      int    `json:"id"`
 	Jsonrpc string `json:"jsonrpc"`
 	Result  string `json:"result"`
 }
 
+// EthereumService is the ethereum parser implementation
 type EthereumService struct {
 	baseURL    string
 	httpClient *http.Client
 }
 
+// NewEthereumService constructor
 func NewEthereumService() *EthereumService {
 	httpClient := &http.Client{}
 
@@ -46,6 +50,7 @@ func NewEthereumService() *EthereumService {
 	}
 }
 
+// GetCurrentBlock returns the number of most recent block from ethereum blockchain
 func (e *EthereumService) GetCurrentBlock(ctx context.Context) (*string, error) {
 	req := RpcRequest{
 		Jsonrpc: jsonRpc,
@@ -77,6 +82,7 @@ func (e *EthereumService) GetCurrentBlock(ctx context.Context) (*string, error) 
 	return &res.Result, nil
 }
 
+// GetBlockByNumber returns information about a block by block number
 func (e *EthereumService) GetBlockByNumber(ctx context.Context, blockNumber string) (*parser.GetBlockByNumberResponse, error) {
 	req := RpcRequest{
 		Jsonrpc: jsonRpc,

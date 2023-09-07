@@ -2,7 +2,7 @@ package block
 
 import "github.com/stretchr/testify/mock"
 
-// MockRepository mock the block repository
+// MockRepository mocks the block repository
 type MockRepository struct {
 	mock.Mock
 }

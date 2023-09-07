@@ -8,12 +8,14 @@ import (
 	"github.com/ydimitriou/eth-blockchain-parser/internal/domain/subscriber"
 )
 
+// Services contains the available adapters services
 type Services struct {
 	BlockRepository      block.Repository
 	SubscriberRepository subscriber.Repository
 	EthereumService      parser.Service
 }
 
+// NewServices instantiates the adapter services
 func NewServices() Services {
 	return Services{
 		BlockRepository:      memory.NewBlockRepository(),

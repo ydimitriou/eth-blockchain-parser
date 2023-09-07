@@ -17,6 +17,7 @@ type Transaction struct {
 	To   string `json:"to"`
 }
 
+// Service interface for blockchain parser
 type Service interface {
 	GetCurrentBlock(ctx context.Context) (*string, error)
 	GetBlockByNumber(ctx context.Context, blockNumber string) (*GetBlockByNumberResponse, error)

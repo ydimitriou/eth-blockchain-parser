@@ -1,5 +1,6 @@
 package subscriber
 
+// Repository interface for subscribers
 type Repository interface {
 	Add(subscriber Subscriber) error
 	Update(subscriber Subscriber) error
