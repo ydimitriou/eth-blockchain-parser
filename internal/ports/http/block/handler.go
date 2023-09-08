@@ -25,13 +25,13 @@ func (h Handler) GetLast(w http.ResponseWriter, _ *http.Request) {
 	block, err := h.blockServices.Queries.GetBlockHandler.Handle()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, err.Error())
+		fmt.Fprintf(w, "Error : %v", err.Error())
 		return
 	}
 	err = json.NewEncoder(w).Encode(block)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, err.Error())
+		fmt.Fprintf(w, "Error : %v", err.Error())
 		return
 	}
 }

@@ -36,7 +36,7 @@ func (h Handler) Create(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, err.Error())
+		fmt.Fprintf(w, "Error : %v", err.Error())
 		return
 	}
 	subscriber := commands.AddSubscriberRequest{
@@ -45,7 +45,8 @@ func (h Handler) Create(w http.ResponseWriter, r *http.Request) {
 	err = h.subServices.Commands.AddSubscriberHandler.Handle(subscriber)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, err.Error())
+		fmt.Fprintf(w, "Error : %v", err.Error())
+		return
 	}
 	w.WriteHeader(http.StatusCreated)
 }
@@ -56,7 +57,7 @@ func (h Handler) GetTransactions(w http.ResponseWriter, r *http.Request, address
 	subTx, err := h.subServices.Queries.GetSubscriberHandler.Handle(req)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, err.Error())
+		fmt.Fprintf(w, "Error : %v", err.Error())
 		return
 	}
 	if subTx == nil {
@@ -67,7 +68,7 @@ func (h Handler) GetTransactions(w http.ResponseWriter, r *http.Request, address
 	err = json.NewEncoder(w).Encode(subTx)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, err.Error())
+		fmt.Fprintf(w, "Error : %v", err.Error())
 		return
 	}
 }

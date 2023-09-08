@@ -71,4 +71,5 @@ Please use `make <target>` where `<target>` is one of the following:
 ```
   `run`             to run the app.
   `test`            to run the tests.
+  `lint`            to perform linting.
 ```

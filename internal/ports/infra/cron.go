@@ -2,7 +2,6 @@ package infra
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -76,12 +75,10 @@ func (w *Worker) parseFirstBlock(ctx context.Context) error {
 // processBlock requests the transactions from eth blockchain for the given block number and updates subscribers in memory if they have transactions in this block
 func (w *Worker) processBlock(ctx context.Context, blockNumber string) error {
 	block, err := w.parserServices.GetBlockByNumber(ctx, blockNumber)
-	fmt.Println("Get transaction details from eth blockhain for block: ", w.hexProvider.HexToInt(blockNumber))
 	if err != nil {
 		return err
 	}
 	blockTransactions := block.Result.Transactions
-	fmt.Println("Block transactions are: ", blockTransactions)
 	for _, tx := range blockTransactions {
 		if w.isSubscriber(tx.From) {
 			err := w.updateSubscriber(tx.From, tx)
@@ -121,7 +118,6 @@ func (w *Worker) isSubscriber(address string) bool {
 // getBlockNumberFromBlockchain return the latest block number on ethereum block chain using the app ParserServices
 func (w *Worker) getBlockNumberFromBlockchain(ctx context.Context) (*string, error) {
 	block, err := w.parserServices.GetCurrentBlock(ctx)
-	fmt.Println("Parsing from eth blockchain block: ", w.hexProvider.HexToInt(*block))
 	if err != nil {
 		return nil, err
 	}
