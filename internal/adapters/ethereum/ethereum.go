@@ -127,9 +127,8 @@ func (e *EthereumService) makeRequest(httpReq *http.Request) ([]byte, error) {
 func extractResponseBody(httpRes *http.Response) ([]byte, error) {
 	defer func() {
 		err := httpRes.Body.Close()
-		// handle this erros better later
 		if err != nil {
-			log.Fatalln(err)
+			log.Printf("httpRes.Body.Close: %v", err)
 		}
 	}()
 
