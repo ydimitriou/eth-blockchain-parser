@@ -44,6 +44,19 @@ The main layers of the project are:
 
 NOTE: The only external package that have been used is only for testing reasons.
 
+## Cron logic explanation
+Given that for the purpose of this project we don't use a web socket in order to getting informed from ethereum blockchain every time a new block is created we implemented a polling mechanism.
+When the application starts we create a go routine ``go ports.Worker.Run()``. The responsibility of this goroutine is:
+1. on the init of the routine we make a call to the ethereum blockchain in order to get the first block for our application and persist it in memory.
+2. then we start a ticker in order to do the following steps every 5 seconds.
+3. ask ethereum blockchain for the latest block number.
+4. check in memory database the latest parsed block number for the application.
+5. given that all blocks are a sequence of integers we check if the lastParsedBlock+1 (which is the next block that we expect to parse) is less than or equal to ethereum's last block number. The reason is to guarantee that we will not miss any blocks between pollings. If the number for the expected next block to parse is greater than the number of ethereums last block number we do nothing since that means we have already parse the latest ethereum block after time interval pass we go to step 3. Otherwise we continue to step 6.
+6. we request the next expected block to parse from the ethereum blockchain including the transactions
+7. iterate over block's transactions and check From and To addresses if they refer to any of the subscribers of the service. Update transactions of the affected subscribers. 
+9. after checking all transactions update the latest parsed block in memory
+10. after time interval pass go to step 3.
+
 ## Future improvements
 - enhance unti tests
 - add integration tests
