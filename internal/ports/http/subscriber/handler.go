@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/ydimitriou/eth-blockchain-parser/internal/app"
 	"github.com/ydimitriou/eth-blockchain-parser/internal/app/subscriber/commands"
 	"github.com/ydimitriou/eth-blockchain-parser/internal/app/subscriber/queries"
@@ -49,9 +48,7 @@ func (h Handler) Create(w http.ResponseWriter, r *http.Request) {
 const GetTransactionsURLParam = "address"
 
 // GetTransactions returns all inbound and outbound transactions for a subscribers address
-func (h Handler) GetTransactions(w http.ResponseWriter, r *http.Request) {
-	v := mux.Vars(r)
-	address := v[GetTransactionsURLParam]
+func (h Handler) GetTransactions(w http.ResponseWriter, r *http.Request, address string) {
 	req := queries.GetSubscriberRequest{Address: address}
 	subTx, err := h.subServices.Queries.GetSubscriberHandler.Handle(req)
 	if err != nil {

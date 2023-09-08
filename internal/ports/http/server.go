@@ -3,8 +3,8 @@ package http
 import (
 	"log"
 	"net/http"
+	"strings"
 
-	"github.com/gorilla/mux"
 	"github.com/ydimitriou/eth-blockchain-parser/internal/app"
 	"github.com/ydimitriou/eth-blockchain-parser/internal/ports/http/block"
 	"github.com/ydimitriou/eth-blockchain-parser/internal/ports/http/subscriber"
@@ -13,27 +13,57 @@ import (
 // Server is the http server
 type Server struct {
 	appServices app.Services
-	router      *mux.Router
+	mux         *http.ServeMux
 }
 
 // NewServer HTTP server constructor
 func NewServer(as app.Services) Server {
-	router := mux.NewRouter()
+	mux := http.NewServeMux()
 	httpServer := Server{
 		appServices: as,
-		router:      router,
+		mux:         mux,
 	}
+
 	httpServer.createHTTPRoutes()
-	http.Handle("/", httpServer.router)
+	http.Handle("/", httpServer.mux)
 
 	return httpServer
 }
 
 // createHTTPRoutes generates routes
 func (httpServer *Server) createHTTPRoutes() {
-	httpServer.router.HandleFunc("/subscriber", subscriber.NewHandler(httpServer.appServices.SubscriberServices).Create).Methods("POST")
-	httpServer.router.HandleFunc("/subscriber"+"/{"+subscriber.GetTransactionsURLParam+"}", subscriber.NewHandler(httpServer.appServices.SubscriberServices).GetTransactions).Methods("GET")
-	httpServer.router.HandleFunc("/last-block", block.NewHandler(httpServer.appServices.BlockServices).GetLast).Methods("GET")
+	subscribeHandler := subscriber.NewHandler(httpServer.appServices.SubscriberServices)
+	blockHandler := block.NewHandler(httpServer.appServices.BlockServices)
+
+	httpServer.mux.HandleFunc("/v1/subscriber", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			subscribeHandler.Create(w, r)
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
+	httpServer.mux.HandleFunc("/v1/subscriber/", func(w http.ResponseWriter, r *http.Request) {
+		pathSegments := strings.Split(r.URL.Path, "/")
+		if len(pathSegments) > 3 {
+			subAddress := pathSegments[3]
+			if r.Method == http.MethodGet {
+				subscribeHandler.GetTransactions(w, r, subAddress)
+			} else {
+				http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			}
+		} else {
+			http.NotFound(w, r)
+		}
+	})
+
+	httpServer.mux.HandleFunc("/v1/last-block", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			blockHandler.GetLast(w, r)
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
 }
 
 // ListenAndServer wraps HTTP listenAndServe (initiate listening for request)
