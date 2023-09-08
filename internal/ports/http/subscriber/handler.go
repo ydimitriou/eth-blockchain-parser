@@ -10,6 +10,11 @@ import (
 	"github.com/ydimitriou/eth-blockchain-parser/internal/app/subscriber/queries"
 )
 
+const (
+	BasePath                = "/v1/subscriber"
+	GetTransactionsURLParam = "address"
+)
+
 // Handler is a subscriber http request handler
 type Handler struct {
 	subServices app.SubscriberServices
@@ -44,8 +49,6 @@ func (h Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 }
-
-const GetTransactionsURLParam = "address"
 
 // GetTransactions returns all inbound and outbound transactions for a subscribers address
 func (h Handler) GetTransactions(w http.ResponseWriter, r *http.Request, address string) {

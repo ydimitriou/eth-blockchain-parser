@@ -35,7 +35,7 @@ func (httpServer *Server) createHTTPRoutes() {
 	subscribeHandler := subscriber.NewHandler(httpServer.appServices.SubscriberServices)
 	blockHandler := block.NewHandler(httpServer.appServices.BlockServices)
 
-	httpServer.mux.HandleFunc("/v1/subscriber", func(w http.ResponseWriter, r *http.Request) {
+	httpServer.mux.HandleFunc(subscriber.BasePath, func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			subscribeHandler.Create(w, r)
 		} else {
@@ -43,7 +43,7 @@ func (httpServer *Server) createHTTPRoutes() {
 		}
 	})
 
-	httpServer.mux.HandleFunc("/v1/subscriber/", func(w http.ResponseWriter, r *http.Request) {
+	httpServer.mux.HandleFunc(subscriber.BasePath+"/", func(w http.ResponseWriter, r *http.Request) {
 		pathSegments := strings.Split(r.URL.Path, "/")
 		if len(pathSegments) > 3 {
 			subAddress := pathSegments[3]
@@ -57,7 +57,7 @@ func (httpServer *Server) createHTTPRoutes() {
 		}
 	})
 
-	httpServer.mux.HandleFunc("/v1/last-block", func(w http.ResponseWriter, r *http.Request) {
+	httpServer.mux.HandleFunc(block.BasePath, func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			blockHandler.GetLast(w, r)
 		} else {

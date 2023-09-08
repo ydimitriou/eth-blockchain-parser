@@ -8,6 +8,8 @@ import (
 	"github.com/ydimitriou/eth-blockchain-parser/internal/app"
 )
 
+const BasePath = "/v1/last-block"
+
 // Handler is block http request handler
 type Handler struct {
 	blockServices app.BlockServices
